@@ -3,6 +3,7 @@ import numpy as np
 from itertools import combinations
 from IPython.display import display
 import time
+import csv
 
 def confidence(a, b, support_cut_dict):
     support_b = support_cut_dict[b]
@@ -44,7 +45,7 @@ def association_rule_mining(data:list, support_th=100, confidence_th=0.2):
     item_key = [i[0] for i in support_cut]
     combination_2 = list(combinations(item_key, 2))
 
-    confidence_cut = [[a, b] for a, b in combination_2 if confidence(a, b, support_cut_dict) > 0.2]
+    confidence_cut = [[a, b] for a, b in combination_2 if confidence(a, b, support_cut_dict) > confidence_th]
     Interest = [interest(i[0], i[1], support_cut_dict) for i in confidence_cut]
     interest_item = [i for i in zip(Interest, confidence_cut)]
 
@@ -55,17 +56,15 @@ def association_rule_mining(data:list, support_th=100, confidence_th=0.2):
 if __name__ =='__main__':
 
     start=time.time()
-    df = pd.read_csv('./store_data.csv', header=None)
-    df.fillna(int(0), inplace=True)
-    item = np.array(df.iloc[:]).tolist()
 
-    data = []
-    for i in item:
-        q = []
-        for j in i:
-            if type(j) == str:
-                q.append(j)
-        data.append(q)
+    data = list()
+    f = open('./store_data.csv', "r")
+    rea = csv.reader(f)
+
+    for i in rea:
+        data.append(i)
+
+    f.close()
 
     display(association_rule_mining(data, 50, 0.22))
     print(f"time : {time.time() - start :.4f} sec")
