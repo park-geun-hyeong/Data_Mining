@@ -24,8 +24,19 @@ def interest(a, b, support_cut_dict):
     return interest
 
 def association_rule_mining(data:list, support_th=100, confidence_th=0.2):
+
+    '''
+    association rule mining using 'A Priori'  Algorithm
+
+    :param data: list of all baskets
+    :param support_th: support threshold
+    :param confidence_th: confidence threshold
+    :return:DF ==> sorted pair itemsets  & interests on datafrane
+    '''
+
     item_dict = dict()
 
+    ## 1 pass
     for i in data:
         for j in i:
             try:
@@ -45,6 +56,7 @@ def association_rule_mining(data:list, support_th=100, confidence_th=0.2):
     item_key = [i[0] for i in support_cut]
     combination_2 = list(combinations(item_key, 2))
 
+    ## 2 pass
     confidence_cut = [[a, b] for a, b in combination_2 if confidence(a, b, support_cut_dict) > confidence_th]
     Interest = [interest(i[0], i[1], support_cut_dict) for i in confidence_cut]
     interest_item = [i for i in zip(Interest, confidence_cut)]
@@ -55,7 +67,7 @@ def association_rule_mining(data:list, support_th=100, confidence_th=0.2):
 
 if __name__ =='__main__':
 
-    start=time.time()
+    start = time.time()
 
     data = list()
     f = open('./store_data.csv', "r")
