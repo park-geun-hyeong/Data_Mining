@@ -4,6 +4,7 @@ from itertools import combinations
 from IPython.display import display
 from collections import defaultdict
 import time
+import csv
 
 def association_rule_mining(data:list, support_th=100, confidence_th=0.2):
 
@@ -49,18 +50,16 @@ def association_rule_mining(data:list, support_th=100, confidence_th=0.2):
 
 if __name__ =='__main__':
 
-    start=time.time()
-    df = pd.read_csv('./store_data.csv', header=None)
-    df.fillna(int(0), inplace=True)
-    item = np.array(df.iloc[:]).tolist()
+    start = time.time()
 
-    data = []
-    for i in item:
-        q = []
-        for j in i:
-            if type(j) == str:
-                q.append(j)
-        data.append(q)
+    data = list()
+    f = open('./store_data.csv', "r")
+    rea = csv.reader(f)
+
+    for i in rea:
+        data.append(i)
+
+    f.close()
 
     display(association_rule_mining(data, 50, 0.22))
-    print(f"time : {time.time() - start :.4f} sec")
+    print(f"time : {time.time() - start :.4f})
