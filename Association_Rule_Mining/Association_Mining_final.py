@@ -1,56 +1,60 @@
-from itertools import combinations
 from IPython.display import display
+from collections import defaultdict
 import time
 import csv
 
+
 def confidence(a, b, frequent_item_dict):
-    support_b = frequent_item_dict[b]
+    support_a = frequent_item_dict[a]
     union = 0
 
     for i in data:
         if (a in i) and (b in i):
             union += 1
 
-    return union / support_b
+    return union / support_a
 
 
-def association_rule_mining(data:list, support_th=100, confidence_th=0.2):
-    
-    
+def association_rule_mining(data: list, support_th=10, confidence_th=0.1):
     def zero():
         return int(0)
 
-    item_dict = defaultdict(zero)
-    
+    item_support = defaultdict(zero)
+
     ## 1 pass    
     for i in data:
         for j in i:
-            item_dict[j] += 1
+            item_support[j] += 1
 
     frequent_item_dict = dict()
-    for i in sorted(item_dict.items(), key=lambda x: x[1], reverse=True):
+    for i in sorted(item_support.items(), key=lambda x: x[1], reverse=True):
         if i[1] > support_th:
             frequent_item_dict[i[0]] = i[1]
-    
-    frequent_item_key = [i for i in frequent_item_dict.keys()]
 
-    combination = list(combinations(frequent_item_key, 2))
-    # combination = [[frequent_item_key[i], frequent_item_key[j]] for i in range(len(frequent_item_key)) for j in range(i+1, len(frequent_item_key))]
- 
+    item_key = [i for i in frequent_item_dict.keys()]
+
+    combination = []
+    for i in range(len(item_key)):
+        for j in range(len(item_key)):
+            if i == j:
+                continue
+            else:
+                combination.append((item_key[i], item_key[j]))
 
     ## 2 pass 
-    confidence_dict={}
-    for i in combination_2:
+    confidence_dict = {}
+    for i in combination:
         if confidence(i[0], i[1], frequent_item_dict) > confidence_th:
-            confidence_dict[i] = confidence(i[0],i[1],frequent_item_dict)
-            
+            confidence_dict[i] = confidence(i[0], i[1], frequent_item_dict)
+
     interest_dict = dict()
-    for i in [i for i in sorted(confidence_dict.items(), key= lambda x: x[1], reverse=True)]:
-        interest_dict[i[0]] = round((i[1] - frequent_item_dict[i[0][1]] / len(data)), 6)
+    for i in confidence_dict.items():
+        interest_dict[f"{i[0][0]} ==> {i[0][1]}"] = round((i[1] - frequent_item_dict[i[0][1]] / len(data)), 6)
 
-    return interest_dict
+    return sorted(interest_dict.items(), key=lambda x: x[1], reverse=True)
 
-if __name__ =='__main__':
+
+if __name__ == '__main__':
 
     start = time.time()
 
@@ -59,9 +63,10 @@ if __name__ =='__main__':
     rea = csv.reader(f)
 
     for i in rea:
-        data.append(i)
+        data.append(set(i))
 
     f.close()
 
-    display(association_rule_mining(data, 30, 0.2))
-    print(f"Time : {time.time() - start :.4f} sec, Num : {len(association_rule_mining(data, 30, 0.2))} ")
+    print("====== Interest of association rule =====")
+    display(association_rule_mining(data))
+    print(f"Time : {time.time() - start :.4f} sec, Num of itemset : {len(association_rule_mining(data))}")
