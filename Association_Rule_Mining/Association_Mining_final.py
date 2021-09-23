@@ -1,4 +1,3 @@
-from IPython.display import display
 from collections import defaultdict
 import time
 import csv
@@ -21,7 +20,7 @@ def association_rule_mining(data: list, support_th=10, confidence_th=0.1):
 
     item_support = defaultdict(zero)
 
-    ## 1 pass    
+    ## 1 pass
     for i in data:
         for j in i:
             item_support[j] += 1
@@ -41,7 +40,7 @@ def association_rule_mining(data: list, support_th=10, confidence_th=0.1):
             else:
                 combination.append((item_key[i], item_key[j]))
 
-    ## 2 pass 
+    ## 2 pass
     confidence_dict = {}
     for i in combination:
         if confidence(i[0], i[1], frequent_item_dict) > confidence_th:
@@ -68,5 +67,5 @@ if __name__ == '__main__':
     f.close()
 
     print("====== Interest of association rule =====")
-    display(association_rule_mining(data))
-    print(f"Time : {time.time() - start :.4f} sec, Num of itemset : {len(association_rule_mining(data))}")
+    print(association_rule_mining(data)[:100])
+    print(f"Time : {time.time() - start :.4f} sec, Num of itemSet : {len(association_rule_mining(data))}")
