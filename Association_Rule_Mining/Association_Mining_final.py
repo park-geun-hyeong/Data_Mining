@@ -82,4 +82,4 @@ if __name__ == '__main__':
     print("====== Confidence & Interest of association rule =====\n")
     for i in association_rule_mining(data):
         print(i)
-    print(f"Time : {time.time() - start :.4f} sec, Num of itemSet : {len(association_rule_mining(data))}")
+    print(f"\nTime : {time.time() - start :.4f} sec, Num of ItemSet : {len(association_rule_mining(data))}")
